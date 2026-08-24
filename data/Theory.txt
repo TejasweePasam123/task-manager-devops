@@ -1,0 +1,6 @@
+Frontend - react
+backend - node js
+database - PostgreSQL
+
+
+node server.js - this should be run and open in cmd and then only proceed ith opening in browser.
