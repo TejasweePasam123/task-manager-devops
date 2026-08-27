@@ -1,23 +1,12 @@
-# Node dependencies
-node_modules/
 
-# Environment variables
+# Environment files
 .env
-.env
+.env.*
+!.env.example
 
-# Keep example environment files
-!.env
-
-# Build output
-dist/
+# Node modules
+backend/node_modules/
+frontend/node_modules/
 
 # Logs
 *.log
-
-# OS files
-.DS_Store
-Thumbs.db
-
-# IDE files
-.vscode/
-.idea/

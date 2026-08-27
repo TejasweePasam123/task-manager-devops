@@ -4,3 +4,9 @@ CREATE TABLE IF NOT EXISTS tasks (
     completed BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
+
+INSERT INTO tasks (title, completed)
+VALUES
+    ('Learn Linux', FALSE),
+    ('Learn Docker', FALSE),
+    ('Learn Kubernetes', FALSE);
