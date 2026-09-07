@@ -4,8 +4,22 @@ const cors = require("cors");
 
 const app = express();
 
+
+// Middleware
 app.use(cors());
 app.use(express.json());
+
+
+// Health check endpoint
+// Used by Kubernetes readiness and liveness probes
+app.get("/health", (req, res) => {
+    res.status(200).json({
+        status: "ok"
+    });
+});
+
+
+// PostgreSQL connection
 const pool = new Pool({
     host: process.env.DB_HOST,
     port: process.env.DB_PORT,
@@ -14,21 +28,6 @@ const pool = new Pool({
     database: process.env.DB_NAME
 });
 
-// PostgreSQL connection
-//const pool = new Pool({
-  //  host: "localhost",
-    //port: 5432,
-    //user: "taskadmin",
-    //password: "taskpassword",
-    //database: "taskdb"
-//});
-
-// Health check
-app.get("/api/health", (req, res) => {
-    res.json({
-        message: "Backend is running"
-    });
-});
 
 // Get all tasks
 app.get("/api/tasks", async (req, res) => {
@@ -38,19 +37,16 @@ app.get("/api/tasks", async (req, res) => {
         );
 
         res.json(result.rows);
+
     } catch (error) {
         console.error("Database error:", error);
+
         res.status(500).json({
             error: "Failed to fetch tasks"
         });
     }
 });
 
-const PORT = 5000;
-
-app.listen(PORT, () => {
-    console.log(`Backend server running on http://localhost:${PORT}`);
-});
 
 // Create a new task
 app.post("/api/tasks", async (req, res) => {
@@ -69,13 +65,16 @@ app.post("/api/tasks", async (req, res) => {
         );
 
         res.status(201).json(result.rows[0]);
+
     } catch (error) {
         console.error("Database error:", error);
+
         res.status(500).json({
             error: "Failed to create task"
         });
     }
 });
+
 
 // Update a task
 app.put("/api/tasks/:id", async (req, res) => {
@@ -99,13 +98,16 @@ app.put("/api/tasks/:id", async (req, res) => {
         }
 
         res.json(result.rows[0]);
+
     } catch (error) {
         console.error("Database error:", error);
+
         res.status(500).json({
             error: "Failed to update task"
         });
     }
 });
+
 
 // Delete a task
 app.delete("/api/tasks/:id", async (req, res) => {
@@ -127,10 +129,22 @@ app.delete("/api/tasks/:id", async (req, res) => {
             message: "Task deleted successfully",
             task: result.rows[0]
         });
+
     } catch (error) {
         console.error("Database error:", error);
+
         res.status(500).json({
             error: "Failed to delete task"
         });
     }
+});
+
+
+// Start the server
+const PORT = 5000;
+
+app.listen(PORT, () => {
+    console.log(
+        `Backend server running on http://localhost:${PORT}`
+    );
 });
