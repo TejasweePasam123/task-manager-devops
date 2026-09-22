@@ -1,0 +1,29 @@
+name: Task Manager CI/CD
+
+on:
+  push:
+    branches:
+      - main
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  azure-login-test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Login to Azure using OIDC
+        uses: azure/login@v2
+        with:
+          client-id: 32f4a325-43b7-4855-ac96-40e604edfdd1
+          tenant-id: 2eb66361-ee69-4224-82b1-f5f9821d811c
+          subscription-id: 98aab639-1e25-4dc3-804f-34c11d8ccf76
+
+      - name: Verify Azure login
+        run: |
+          az account show
