@@ -143,8 +143,10 @@ app.delete("/api/tasks/:id", async (req, res) => {
 // Start the server
 const PORT = 5000;
 
-app.listen(PORT, () => {
-    console.log(
-        `Backend server running on http://localhost:${PORT}`
-    );
-});
+if (require.main === module) {
+    app.listen(PORT, () => {
+        console.log(`Backend server running on http://localhost:${PORT}`);
+    });
+}
+
+module.exports = app;
