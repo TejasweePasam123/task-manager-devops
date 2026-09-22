@@ -9,8 +9,12 @@ permissions:
   contents: read
   id-token: write
 
+env:
+  ACR_LOGIN_SERVER: tejasweetaskmanageracr2026.azurecr.io
+  ACR_NAME: tejasweetaskmanageracr2026
+
 jobs:
-  azure-login-test:
+  build-and-push:
     runs-on: ubuntu-latest
 
     steps:
@@ -24,6 +28,27 @@ jobs:
           tenant-id: 2eb66361-ee69-4224-82b1-f5f9821d811c
           subscription-id: 98aab639-1e25-4dc3-804f-34c11d8ccf76
 
-      - name: Verify Azure login
+      - name: Login to Azure Container Registry
         run: |
-          az account show
+          az acr login --name ${{ env.ACR_NAME }}
+
+      - name: Build backend Docker image
+        run: |
+          docker build \
+            -t ${{ env.ACR_LOGIN_SERVER }}/task-manager-backend:${{ github.sha }} \
+            ./backend
+
+      - name: Build frontend Docker image
+        run: |
+          docker build \
+            --build-arg VITE_API_URL=/api/tasks \
+            -t ${{ env.ACR_LOGIN_SERVER }}/task-manager-frontend:${{ github.sha }} \
+            ./frontend
+
+      - name: Push backend Docker image
+        run: |
+          docker push ${{ env.ACR_LOGIN_SERVER }}/task-manager-backend:${{ github.sha }}
+
+      - name: Push frontend Docker image
+        run: |
+          docker push ${{ env.ACR_LOGIN_SERVER }}/task-manager-frontend:${{ github.sha }}
